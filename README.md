@@ -1,2 +1,3 @@
 # Live2dRender
-render for new version of live2d in Web
+
+A JS render for new version of Live2D
