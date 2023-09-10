@@ -313,20 +313,27 @@ export class LAppDelegate {
     _textureManager: LAppTextureManager; // テクスチャマネージャー
 }
 
+let expressionCount = 0;
+
 /**
  * クリックしたときに呼ばれる。
  */
 function onClickBegan(e: MouseEvent): void {
-    if (!LAppDelegate.getInstance()._view) {
+    const live2dModel = LAppDelegate.getInstance();
+    if (!live2dModel._view) {
         LAppPal.printMessage('view notfound');
         return;
     }
-    LAppDelegate.getInstance()._captured = true;
+    
+    const manager = LAppLive2DManager.getInstance();
+    const model = manager.model;
 
-    const posX: number = e.pageX;
-    const posY: number = e.pageY;
-
-    LAppDelegate.getInstance()._view.onTouchesBegan(posX, posY);
+    console.log(model._modelSetting.getMotionGroupCount());
+    
+    model.setRandomExpression();
+    // const expressionId = (expressionCount ++) % model.setRandomExpression();
+    
+    // console.log(model._expressions._size);   
 }
 
 /**

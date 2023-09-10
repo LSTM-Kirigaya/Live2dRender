@@ -134,7 +134,7 @@ export class LAppModel extends CubismUserModel {
             if (this._modelSetting.getExpressionCount() > 0) {
                 const count: number = this._modelSetting.getExpressionCount();
 
-                for (let i = 0; i < count; i++) {
+                for (let i = 0; i < count; ++ i) {
                     const expressionName = this._modelSetting.getExpressionName(i);
                     const expressionFileName =
                         this._modelSetting.getExpressionFileName(i);
@@ -674,6 +674,7 @@ export class LAppModel extends CubismUserModel {
         for (let i = 0; i < this._expressions.getSize(); i++) {
             if (i == no) {
                 const name: string = this._expressions._keyValues[i].first;
+                LAppPal.printMessage('set expression: ' + name);
                 this.setExpression(name);
                 return;
             }

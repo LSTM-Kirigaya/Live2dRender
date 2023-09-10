@@ -61,6 +61,10 @@ export class LAppLive2DManager {
         return null;
     }
 
+    public get model(): LAppModel {
+        return this.getModel(0);
+    }
+
     /**
      * 現在のシーンで保持しているすべてのモデルを解放する
      */
