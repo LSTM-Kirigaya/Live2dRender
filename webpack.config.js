@@ -7,7 +7,7 @@ module.exports = {
   entry: './src/main.ts',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'live2dv4.js',
+    filename: 'live2d-render.js',
     publicPath: '/dist/'
   },
   resolve: {

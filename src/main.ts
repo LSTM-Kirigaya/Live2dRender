@@ -5,11 +5,11 @@
  * that can be found at https://www.live2d.com/eula/live2d-open-software-license-agreement_en.html.
  */
 
-import { LAppDelegate, Live2dConfig } from './lappdelegate';
-import * as LAppDefine from './lappdefine';
+import { LAppDelegate } from './lappdelegate';
+import LAppDefine from './lappdefine';
 
 
-async function initializeLive2D(config: Live2dConfig) {
+async function initializeLive2D() {
 
 }
 
@@ -17,28 +17,40 @@ async function initializeLive2D(config: Live2dConfig) {
  * ブラウザロード後の処理
  */
 window.onload = (): void => {
-  // create the application instance
-  if (LAppDelegate.getInstance().initialize({
-    modelRoot: './sdwhite cat b'
-  }) == false) {
-    return;
-  }
+    const live2dModel = LAppDelegate.getInstance();
 
-  LAppDelegate.getInstance().run();
+    LAppDefine.CanvasId = 'live2d';
+    LAppDefine.BackgroundTransparent = true;
+    LAppDefine.ResourcesPath = './cat/sdwhite cat b.model3.json';
+
+    const ok = live2dModel.initialize();
+    if (!ok) {
+        console.log('初始化失败，退出');
+        return;
+    }
+
+    // just run
+    live2dModel.run();
 };
 
 /**
  * 終了時の処理
  */
-window.onbeforeunload = (): void => LAppDelegate.releaseInstance();
+window.onbeforeunload = (): void => {
+    const live2dModel = LAppDelegate.getInstance();
+    if (live2dModel) {
+        live2dModel.release();
+    }
+}
 
 /**
  * Process when changing screen size.
  */
 window.onresize = () => {
-  if (LAppDefine.CanvasSize === 'auto') {
-    LAppDelegate.getInstance().onResize();
-  }
+    const live2dModel = LAppDelegate.getInstance();
+    if (live2dModel && LAppDefine.CanvasSize === 'auto') {
+        live2dModel.onResize();
+    }
 };
 
 export {

@@ -8,7 +8,7 @@
 import { CubismMatrix44 } from '@framework/math/cubismmatrix44';
 import { CubismViewMatrix } from '@framework/math/cubismviewmatrix';
 
-import * as LAppDefine from './lappdefine';
+import LAppDefine from './lappdefine';
 import { canvas, gl, LAppDelegate } from './lappdelegate';
 import { LAppLive2DManager } from './lapplive2dmanager';
 import { LAppPal } from './lapppal';

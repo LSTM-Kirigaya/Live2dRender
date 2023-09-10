@@ -9,11 +9,12 @@ import { CubismMatrix44 } from '@framework/math/cubismmatrix44';
 import { ACubismMotion } from '@framework/motion/acubismmotion';
 import { csmVector } from '@framework/type/csmvector';
 
-import * as LAppDefine from './lappdefine';
+import LAppDefine from './lappdefine';
 import { canvas } from './lappdelegate';
 import { LAppModel } from './lappmodel';
 import { LAppPal } from './lapppal';
 
+// 单例模式全局变量
 export let s_instance: LAppLive2DManager = null;
 
 /**
@@ -164,31 +165,35 @@ export class LAppLive2DManager {
      * サンプルアプリケーションではモデルセットの切り替えを行う。
      */
     public nextScene(): void {
-        const no: number = (this._sceneIndex + 1) % LAppDefine.ModelDirSize;
-        this.changeScene(no);
+
+    }
+
+    private getModelPath(modelJsonPath: string): string {
+        if (!modelJsonPath.includes('/')) {
+            return '.';
+        }
+        const pathComponents: string[] = modelJsonPath.split('/');
+        pathComponents.pop();
+        const modelDir = pathComponents.join('/');
+        return modelDir + '/';
     }
 
     /**
      * シーンを切り替える
      * サンプルアプリケーションではモデルセットの切り替えを行う。
      */
-    public changeScene(index: number): void {
-        this._sceneIndex = index;
-        if (LAppDefine.DebugLogEnable) {
-            LAppPal.printMessage(`[APP]model index: ${this._sceneIndex}`);
+    public loadLive2dModel(): void {
+        const modelJsonPath = LAppDefine.ResourcesPath;
+        if (!modelJsonPath.endsWith('.model3.json')) {
+            console.log('无法加载模型！模型资源路径的结尾必须是.model3.json！');
+            return;
         }
 
-        // ModelDir[]に保持したディレクトリ名から
-        // model3.jsonのパスを決定する。
-        // ディレクトリ名とmodel3.jsonの名前を一致させておくこと。
-        const model: string = LAppDefine.ModelDir[index];
-        const modelPath: string = LAppDefine.ResourcesPath + model + '/';
-        let modelJsonName: string = LAppDefine.ModelDir[index];
-        modelJsonName += '.model3.json';
+        const modelPath = this.getModelPath(modelJsonPath);
 
         this.releaseAllModel();
         this._models.pushBack(new LAppModel());
-        this._models.at(0).loadAssets(modelPath, modelJsonName);
+        this._models.at(0).loadAssets(modelPath, modelJsonPath);
     }
 
     public setViewMatrix(m: CubismMatrix44) {
@@ -203,8 +208,7 @@ export class LAppLive2DManager {
     constructor() {
         this._viewMatrix = new CubismMatrix44();
         this._models = new csmVector<LAppModel>();
-        this._sceneIndex = 0;
-        this.changeScene(this._sceneIndex);
+        this.loadLive2dModel();
     }
 
     _viewMatrix: CubismMatrix44; // モデル描画に用いるview行列

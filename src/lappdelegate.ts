@@ -8,7 +8,7 @@
 
 import { CubismFramework, Option } from '@framework/live2dcubismframework';
 
-import * as LAppDefine from './lappdefine';
+import LAppDefine from './lappdefine';
 import { LAppLive2DManager } from './lapplive2dmanager';
 import { LAppPal } from './lapppal';
 import { LAppTextureManager } from './lapptexturemanager';
@@ -20,13 +20,6 @@ export let gl: WebGLRenderingContext = null;
 export let frameBuffer: WebGLFramebuffer = null;
 
 export type CanvasSize = { width: number; height: number } | 'auto';
-
-export interface Live2dConfig {
-    canvasId?: string
-    canvasSize?: CanvasSize
-    modelRoot: string
-    backgroundTransparent?: boolean
-}
 
 
 /**
@@ -62,20 +55,16 @@ export class LAppDelegate {
     /**
      * APPに必要な物を初期化する。
      */
-    public initialize(config: Live2dConfig): boolean {
+    public initialize(): boolean {
         // キャンバスの作成
         canvas = document.createElement('canvas');
-        canvas.id = config.canvasId ? config.canvasId : 'live2d';
-        if (config.backgroundTransparent) {
-            canvas.style.backgroundColor = "transparent";
-        }
+        canvas.id = LAppDefine.CanvasId;
         
-        const canvasSize: CanvasSize = config.canvasSize ? config.canvasSize : 'auto';
-        if (canvasSize === 'auto') {
+        if (LAppDefine.CanvasSize === 'auto') {
             this._resizeCanvas();
         } else {
-            canvas.width = canvasSize.width;
-            canvas.height = canvasSize.height;
+            canvas.width = LAppDefine.CanvasSize.width;
+            canvas.height = LAppDefine.CanvasSize.height;
         }
 
         // glコンテキストを初期化

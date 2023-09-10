@@ -8,67 +8,101 @@
 import { LogLevel } from '@framework/live2dcubismframework';
 
 /**
- * Sample Appで使用する定数
+ * 配置参数
  */
 
-// Canvas width and height pixel values, or dynamic screen size ('auto').
-export const CanvasSize: { width: number; height: number } | 'auto' = 'auto';
+interface ILAppDefine {
+    CanvasId: string
+    BackgroundTransparent: boolean
 
-// 画面
-export const ViewScale = 1.0;
-export const ViewMaxScale = 2.0;
-export const ViewMinScale = 0.8;
+    CanvasSize: { width: number; height: number } | 'auto'
 
-export const ViewLogicalLeft = -1.0;
-export const ViewLogicalRight = 1.0;
-export const ViewLogicalBottom = -1.0;
-export const ViewLogicalTop = 1.0;
+    // 画面参数
+    ViewScale: number
+    ViewMaxScale: number
+    ViewMinScale: number
 
-export const ViewLogicalMaxLeft = -2.0;
-export const ViewLogicalMaxRight = 2.0;
-export const ViewLogicalMaxBottom = -2.0;
-export const ViewLogicalMaxTop = 2.0;
+    ViewLogicalLeft: number
+    ViewLogicalRight: number
+    ViewLogicalBottom: number
+    ViewLogicalTop: number
 
-// 相対パス
-export const ResourcesPath = '../../MyLive2d/';
+    ViewLogicalMaxLeft: number
+    ViewLogicalMaxRight: number
+    ViewLogicalMaxBottom: number
+    ViewLogicalMaxTop: number
+
+    // 资源路径，必须是model3文件的地址
+    ResourcesPath: string
+
+    // 结束按钮
+    PowerImageName: string
+
+    MotionGroupIdle: string     // 
+    MotionGroupTapBody: string  // 点击身体
+
+    HitAreaNameHead: string
+    HitAreaNameBody: string
+
+    // 优先度
+    PriorityNone: number
+    PriorityIdle: number
+    PriorityNormal: number
+    PriorityForce: number
+
+    // MOC3 一致性验证
+    MOCConsistencyValidationEnable: boolean
+
+    // 调试日志显示选项
+    DebugLogEnable: boolean
+    DebugTouchLogEnable: boolean
+
+    // Framework 输出日志级别
+    CubismLoggingLevel: LogLevel
+
+    // 默认渲染大小
+    RenderTargetWidth: number
+    RenderTargetHeight: number
+}
 
 
-// 終了ボタン
-export const PowerImageName = 'CloseNormal.png';
 
-// モデル定義---------------------------------------------
-// モデルを配置したディレクトリ名の配列
-// ディレクトリ名とmodel3.jsonの名前を一致させておくこと
-export const ModelDir: string[] = [
-    'sdwhite cat b'
-];
+const LAppDefine: ILAppDefine = {
+    CanvasId: 'live2d',
+    BackgroundTransparent: true,
+    
+    CanvasSize: 'auto',
+    ViewScale: 1.0,
+    ViewMaxScale: 2.0,
+    ViewMinScale: 0.8,
+    ViewLogicalLeft: - 1.0,
+    ViewLogicalRight: 1.0,
+    ViewLogicalBottom: - 1.0,
+    ViewLogicalTop: 1.0,
+    ViewLogicalMaxLeft: - 2.0,
+    ViewLogicalMaxRight: 2.0,
+    ViewLogicalMaxBottom: - 2.0,
+    ViewLogicalMaxTop: 2.0,
+    ResourcesPath: '',
+    PowerImageName: '',
+    MotionGroupIdle: 'Idle',
+    MotionGroupTapBody: 'TapBody',
+    HitAreaNameHead: 'Head',
+    HitAreaNameBody: 'Body',
 
-export const ModelDirSize: number = ModelDir.length;
+    PriorityNone: 0,
+    PriorityIdle: 1,
+    PriorityNormal: 2,
+    PriorityForce: 3,
 
-// 外部定義ファイル（json）と合わせる
-export const MotionGroupIdle = 'Idle'; // アイドリング
-export const MotionGroupTapBody = 'TapBody'; // 体をタップしたとき
+    MOCConsistencyValidationEnable: true,
+    DebugLogEnable: true,
+    DebugTouchLogEnable: false,
+    CubismLoggingLevel: LogLevel.LogLevel_Verbose,
 
-// 外部定義ファイル（json）と合わせる
-export const HitAreaNameHead = 'Head';
-export const HitAreaNameBody = 'Body';
+    RenderTargetWidth: 1900,
+    RenderTargetHeight: 1000
+}
 
-// モーションの優先度定数
-export const PriorityNone = 0;
-export const PriorityIdle = 1;
-export const PriorityNormal = 2;
-export const PriorityForce = 3;
 
-// MOC3の一貫性検証オプション
-export const MOCConsistencyValidationEnable = true;
-
-// デバッグ用ログの表示オプション   
-export const DebugLogEnable = true;
-export const DebugTouchLogEnable = false;
-
-// Frameworkから出力するログのレベル設定
-export const CubismLoggingLevel: LogLevel = LogLevel.LogLevel_Verbose;
-
-// デフォルトのレンダーターゲットサイズ
-export const RenderTargetWidth = 1900;
-export const RenderTargetHeight = 1000;
+export default LAppDefine;

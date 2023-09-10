@@ -38,7 +38,7 @@ import {
     CubismLogInfo
 } from '@framework/utils/cubismdebug';
 
-import * as LAppDefine from './lappdefine';
+import LAppDefine from './lappdefine';
 import { canvas, frameBuffer, gl, LAppDelegate } from './lappdelegate';
 import { LAppPal } from './lapppal';
 import { TextureInfo } from './lapptexturemanager';
@@ -79,25 +79,23 @@ export class LAppModel extends CubismUserModel {
     /**
      * model3.jsonが置かれたディレクトリとファイルパスからモデルを生成する
      * @param dir
-     * @param fileName
+     * @param fileName model3.json 文件的路径
      */
-    public loadAssets(dir: string, fileName: string): void {
+    public async loadAssets(dir: string, filePath: string): Promise<void> {
         this._modelHomeDir = dir;
+        
+        const response = await fetch(filePath);
+        const arrayBuffer = await response.arrayBuffer();
+        const setting: ICubismModelSetting = new CubismModelSettingJson(
+            arrayBuffer,
+            arrayBuffer.byteLength
+        );
 
-        fetch(`${this._modelHomeDir}${fileName}`)
-            .then(response => response.arrayBuffer())
-            .then(arrayBuffer => {
-                const setting: ICubismModelSetting = new CubismModelSettingJson(
-                    arrayBuffer,
-                    arrayBuffer.byteLength
-                );
+        // ステートを更新
+        this._state = LoadStep.LoadModel;
 
-                // ステートを更新
-                this._state = LoadStep.LoadModel;
-
-                // 結果を保存
-                this.setupModel(setting);
-            });
+        // 結果を保存
+        this.setupModel(setting);
     }
 
     /**
