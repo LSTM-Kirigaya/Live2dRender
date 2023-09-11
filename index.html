@@ -11,12 +11,31 @@
     }
   </style>
   <!-- Pollyfill script -->
-  <script src="./minified@3.6.1.js"></script>
+  <script src="./minified@3.6.1.js" async></script>
   <!-- Live2DCubismCore script -->
-  <script src = "./live2dcubismcore.js"></script>
+  <script src = "./live2dcubismcore.js" async></script>
   <!-- Build script -->
-  <script src = "./dist/live2d-render.js"></script>
+  <script src = "./dist/live2d-render.js" async></script>
 </head>
 <body>
+    
 </body>
+<style>
+    #live2d {
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        z-index: 9999;
+    }
+
+    body {
+        background-image: url(https://image.baidu.com/search/down?url=https://tvax3.sinaimg.cn//large/a15b4afegy1fmvizjlwi5j21hc0u0npd.jpg);
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        background-size: cover;
+        -webkit-background-size: cover;
+        -o-background-size: cover;
+        background-position: center 0;
+    }
+</style>
 </html>

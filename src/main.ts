@@ -20,6 +20,10 @@ window.onload = (): void => {
     const live2dModel = LAppDelegate.getInstance();
 
     LAppDefine.CanvasId = 'live2d';
+    LAppDefine.CanvasSize = {
+        height: 500,
+        width: 400
+    }
     LAppDefine.BackgroundTransparent = true;
     LAppDefine.ResourcesPath = './cat/sdwhite cat b.model3.json';
 
@@ -27,6 +31,8 @@ window.onload = (): void => {
     if (!ok) {
         console.log('初始化失败，退出');
         return;
+    } else {
+
     }
 
     // just run

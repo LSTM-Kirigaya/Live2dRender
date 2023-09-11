@@ -12,8 +12,6 @@ import LAppDefine from './lappdefine';
 import { canvas, gl, LAppDelegate } from './lappdelegate';
 import { LAppLive2DManager } from './lapplive2dmanager';
 import { LAppPal } from './lapppal';
-import { LAppSprite } from './lappsprite';
-import { TextureInfo } from './lapptexturemanager';
 import { TouchManager } from './touchmanager';
 
 /**
@@ -25,8 +23,6 @@ export class LAppView {
      */
     constructor() {
         this._programId = null;
-        this._back = null;
-        this._gear = null;
 
         // タッチ関係のイベント管理
         this._touchManager = new TouchManager();
@@ -84,12 +80,6 @@ export class LAppView {
         this._touchManager = null;
         this._deviceToScreen = null;
 
-        this._gear.release();
-        this._gear = null;
-
-        this._back.release();
-        this._back = null;
-
         gl.deleteProgram(this._programId);
         this._programId = null;
     }
@@ -99,14 +89,6 @@ export class LAppView {
      */
     public render(): void {
         gl.useProgram(this._programId);
-
-        if (this._back) {
-            this._back.render(this._programId);
-        }
-        if (this._gear) {
-            this._gear.render(this._programId);
-        }
-
         gl.flush();
 
         const live2DManager: LAppLive2DManager = LAppLive2DManager.getInstance();
@@ -227,8 +209,6 @@ export class LAppView {
     _deviceToScreen: CubismMatrix44; // デバイスからスクリーンへの行列
     _viewMatrix: CubismViewMatrix; // viewMatrix
     _programId: WebGLProgram; // シェーダID
-    _back: LAppSprite; // 背景画像
-    _gear: LAppSprite; // ギア画像
     _changeModel: boolean; // モデル切り替えフラグ
     _isClick: boolean; // クリック中
 }

@@ -72,11 +72,8 @@ export class LAppDelegate {
         gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
 
         if (!gl) {
-            alert('Cannot initialize WebGL. This browser does not support.');
+            console.log('Cannot initialize WebGL. This browser does not support.');
             gl = null;
-
-            document.body.innerHTML =
-                'This browser does not support the <code>&lt;canvas&gt;</code> element.';
 
             // gl初期化失敗
             return false;
@@ -92,6 +89,9 @@ export class LAppDelegate {
         // 透過設定
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+        gl.clearColor(0, 0, 0, 0);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         const supportTouch: boolean = 'ontouchend' in canvas;
 
@@ -285,6 +285,7 @@ export class LAppDelegate {
         this._cubismOption.loggingLevel = LAppDefine.CubismLoggingLevel;
         CubismFramework.startUp(this._cubismOption);
 
+
         // initialize cubism
         CubismFramework.initialize();
 
@@ -292,8 +293,6 @@ export class LAppDelegate {
         LAppLive2DManager.getInstance();
 
         LAppPal.updateTime();
-
-        this._view.initializeSprite();
     }
 
     /**
