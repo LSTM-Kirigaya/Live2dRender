@@ -163,7 +163,7 @@ export class LAppDelegate {
             LAppPal.updateTime();
 
             // 画面の初期化
-            gl.clearColor(0.0, 0.0, 0.0, 1.0);
+            gl.clearColor(0.0, 0.0, 0.0, 0.0);
 
             // 深度テストを有効化
             gl.enable(gl.DEPTH_TEST);
@@ -284,7 +284,6 @@ export class LAppDelegate {
         this._cubismOption.logFunction = LAppPal.printMessage;
         this._cubismOption.loggingLevel = LAppDefine.CubismLoggingLevel;
         CubismFramework.startUp(this._cubismOption);
-
 
         // initialize cubism
         CubismFramework.initialize();
