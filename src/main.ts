@@ -8,35 +8,53 @@
 import { LAppDelegate } from './lappdelegate';
 import LAppDefine from './lappdefine';
 
+interface Live2dRenderConfig {
+    CanvasId: string
+    CanvasSize: { height: number, width: number } | 'auto'
+    BackgroundRGBA: [number, number, number, number]
+    ResourcesPath: string
+}
 
-async function initializeLive2D() {
+function launchLive2d() {
+    const live2dModel = LAppDelegate.getInstance();
+    const ok = live2dModel.initialize();
+    if (!ok) {
+        console.log('初始化失败，退出');
+        return;
+    } else {
+        // just run
+        live2dModel.run();
+    }
+}
 
+async function initializeLive2D(config: Live2dRenderConfig) {
+    if (config.CanvasId) {
+        LAppDefine.CanvasId = config.CanvasId;
+    }
+    if (config.CanvasSize) {
+        LAppDefine.CanvasSize = config.CanvasSize;
+    }
+    if (config.BackgroundRGBA) {
+        LAppDefine.BackgroundRGBA = config.BackgroundRGBA;
+    }
+    if (config.ResourcesPath) {
+        LAppDefine.ResourcesPath = config.ResourcesPath;
+    }
+    
 }
 
 /**
  * ブラウザロード後の処理
  */
 window.onload = (): void => {
-    const live2dModel = LAppDelegate.getInstance();
-
     LAppDefine.CanvasId = 'live2d';
     LAppDefine.CanvasSize = {
         height: 500,
         width: 400
     }
-    LAppDefine.BackgroundTransparent = true;
+    LAppDefine.BackgroundRGBA = [0.0, 0.0, 0.0, 0.0];
     LAppDefine.ResourcesPath = './cat/sdwhite cat b.model3.json';
-
-    const ok = live2dModel.initialize();
-    if (!ok) {
-        console.log('初始化失败，退出');
-        return;
-    } else {
-
-    }
-
-    // just run
-    live2dModel.run();
+    launchLive2d();
 };
 
 /**

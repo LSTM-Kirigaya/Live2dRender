@@ -163,7 +163,7 @@ export class LAppDelegate {
             LAppPal.updateTime();
 
             // 画面の初期化
-            gl.clearColor(0.0, 0.0, 0.0, 0.0);
+            gl.clearColor(...LAppDefine.BackgroundRGBA);
 
             // 深度テストを有効化
             gl.enable(gl.DEPTH_TEST);
