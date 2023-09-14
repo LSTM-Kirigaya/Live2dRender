@@ -13,6 +13,7 @@ import { LogLevel } from '@framework/live2dcubismframework';
 
 interface ILAppDefine {
     CanvasId: string
+    MessageBoxId: string
     BackgroundRGBA: [number, number, number, number]
 
     CanvasSize: { width: number; height: number } | 'auto'
@@ -69,6 +70,7 @@ interface ILAppDefine {
 
 const LAppDefine: ILAppDefine = {
     CanvasId: 'live2d',
+    MessageBoxId: 'live2dMessageBox',
     BackgroundRGBA: [0.0, 0.0, 0.0, 0.0],
     CanvasSize: 'auto',
     ViewScale: 1.0,

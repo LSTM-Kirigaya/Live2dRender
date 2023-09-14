@@ -7,6 +7,8 @@
 
 import { LAppDelegate } from './lappdelegate';
 import LAppDefine from './lappdefine';
+import { LAppLive2DManager } from './lapplive2dmanager';
+import { LAppMessageBox } from './lappmessagebox';
 
 interface Live2dRenderConfig {
     CanvasId: string
@@ -15,7 +17,7 @@ interface Live2dRenderConfig {
     ResourcesPath: string
 }
 
-function launchLive2d() {
+async function launchLive2d() {
     const live2dModel = LAppDelegate.getInstance();
     const ok = live2dModel.initialize();
     if (!ok) {
@@ -24,8 +26,40 @@ function launchLive2d() {
     } else {
         // just run
         live2dModel.run();
+        return;
     }
 }
+
+
+function setExpression(name: string) {
+    const manager = LAppLive2DManager.getInstance();
+    if (manager) {
+        manager.model.setExpression(name);
+    }
+}
+
+function setRandomExpression() {
+    const manager = LAppLive2DManager.getInstance();
+    if (manager) {
+        manager.model.setRandomExpression();
+    }
+}
+
+function setMessageBox(message: string, duration: number) {
+    const messageBox = LAppMessageBox.getInstance();
+    messageBox.setMessage(message, duration);
+}
+
+function hideMessageBox() {
+    const messageBox = LAppMessageBox.getInstance();
+    messageBox.hideMessageBox();
+}
+
+function revealMessageBox() {
+    const messageBox = LAppMessageBox.getInstance();
+    messageBox.revealMessageBox();
+}
+
 
 async function initializeLive2D(config: Live2dRenderConfig) {
     if (config.CanvasId) {
@@ -40,22 +74,22 @@ async function initializeLive2D(config: Live2dRenderConfig) {
     if (config.ResourcesPath) {
         LAppDefine.ResourcesPath = config.ResourcesPath;
     }
-    
+    return launchLive2d();
 }
 
-/**
- * ブラウザロード後の処理
- */
-window.onload = (): void => {
-    LAppDefine.CanvasId = 'live2d';
-    LAppDefine.CanvasSize = {
-        height: 500,
-        width: 400
-    }
-    LAppDefine.BackgroundRGBA = [0.0, 0.0, 0.0, 0.0];
-    LAppDefine.ResourcesPath = './cat/sdwhite cat b.model3.json';
-    launchLive2d();
-};
+// /**
+//  * ブラウザロード後の処理
+//  */
+// window.onload = (): void => {
+//     LAppDefine.CanvasId = 'live2d';
+//     LAppDefine.CanvasSize = {
+//         height: 500,
+//         width: 400
+//     }
+//     LAppDefine.BackgroundRGBA = [0.0, 0.0, 0.0, 0.0];
+//     LAppDefine.ResourcesPath = './cat/sdwhite cat b.model3.json';
+//     launchLive2d();
+// };
 
 /**
  * 終了時の処理
@@ -78,5 +112,10 @@ window.onresize = () => {
 };
 
 export {
-    initializeLive2D
+    initializeLive2D,
+    setExpression,
+    setMessageBox,
+    setRandomExpression,
+    hideMessageBox,
+    revealMessageBox
 };

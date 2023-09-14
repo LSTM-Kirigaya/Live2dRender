@@ -11,23 +11,19 @@
     }
   </style>
   <!-- Pollyfill script -->
-  <script src="./minified@3.6.1.js" async></script>
+  <script src="https://unpkg.com/core-js-bundle@3.6.1/minified.js" async></script>
   <!-- Live2DCubismCore script -->
-  <script src = "./live2dcubismcore.js" async></script>
+  <script src = "https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js" async></script>
   <!-- Build script -->
   <script src = "./dist/live2d-render.js" async></script>
+
+  <link rel="stylesheet" href="./live2d-render.css">
+
 </head>
 <body>
     
 </body>
 <style>
-    #live2d {
-        position: fixed;
-        bottom: 0;
-        right: 0;
-        z-index: 9999;
-    }
-
     body {
         background-image: url(https://image.baidu.com/search/down?url=https://tvax3.sinaimg.cn//large/a15b4afegy1fmvizjlwi5j21hc0u0npd.jpg);
         background-attachment: fixed;

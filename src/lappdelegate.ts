@@ -13,8 +13,10 @@ import { LAppLive2DManager } from './lapplive2dmanager';
 import { LAppPal } from './lapppal';
 import { LAppTextureManager } from './lapptexturemanager';
 import { LAppView } from './lappview';
+import { LAppMessageBox } from './lappmessagebox';
 
 export let canvas: HTMLCanvasElement = null;
+export let messageBox: HTMLDivElement = null;
 export let s_instance: LAppDelegate = null;
 export let gl: WebGLRenderingContext = null;
 export let frameBuffer: WebGLFramebuffer = null;
@@ -58,7 +60,12 @@ export class LAppDelegate {
     public initialize(): boolean {
         // キャンバスの作成
         canvas = document.createElement('canvas');
+        
         canvas.id = LAppDefine.CanvasId;
+        canvas.style.position = 'fixed';
+        canvas.style.bottom = '0';
+        canvas.style.right = '0';
+        canvas.style.zIndex = '9999';
         
         if (LAppDefine.CanvasSize === 'auto') {
             this._resizeCanvas();
@@ -82,6 +89,9 @@ export class LAppDelegate {
         // キャンバスを DOM に追加
         document.body.appendChild(canvas);
 
+        // 初始化对话框
+        LAppMessageBox.getInstance().initialize(canvas);
+
         if (!frameBuffer) {
             frameBuffer = gl.getParameter(gl.FRAMEBUFFER_BINDING);
         }
@@ -90,7 +100,6 @@ export class LAppDelegate {
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-        gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         const supportTouch: boolean = 'ontouchend' in canvas;
@@ -313,6 +322,8 @@ export class LAppDelegate {
 
 let expressionCount = 0;
 
+let toggle = true;
+
 /**
  * クリックしたときに呼ばれる。
  */
@@ -325,13 +336,8 @@ function onClickBegan(e: MouseEvent): void {
     
     const manager = LAppLive2DManager.getInstance();
     const model = manager.model;
-
-    console.log(model._modelSetting.getMotionGroupCount());
     
     model.setRandomExpression();
-    // const expressionId = (expressionCount ++) % model.setRandomExpression();
-    
-    // console.log(model._expressions._size);   
 }
 
 /**

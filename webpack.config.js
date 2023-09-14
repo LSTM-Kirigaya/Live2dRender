@@ -8,7 +8,8 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'live2d-render.js',
-        publicPath: '/dist/'
+        publicPath: '/dist/',
+        libraryTarget: 'commonjs2'
     },
     resolve: {
         extensions: ['.ts', '.js'],

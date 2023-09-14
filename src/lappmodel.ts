@@ -641,7 +641,7 @@ export class LAppModel extends CubismUserModel {
      *
      * @param expressionId 表情モーションのID
      */
-    public setExpression(expressionId: string): void {
+    public setExpression(expressionId: string): void {        
         const motion: ACubismMotion = this._expressions.getValue(expressionId);
 
         if (this._debugMode) {
@@ -651,7 +651,7 @@ export class LAppModel extends CubismUserModel {
         if (motion != null) {
             this._expressionManager.startMotionPriority(
                 motion,
-                false,
+                true,
                 LAppDefine.PriorityForce
             );
         } else {
@@ -671,14 +671,9 @@ export class LAppModel extends CubismUserModel {
 
         const no: number = Math.floor(Math.random() * this._expressions.getSize());
 
-        for (let i = 0; i < this._expressions.getSize(); i++) {
-            if (i == no) {
-                const name: string = this._expressions._keyValues[i].first;
-                LAppPal.printMessage('set expression: ' + name);
-                this.setExpression(name);
-                return;
-            }
-        }
+        const name: string = this._expressions._keyValues[no].first;
+        LAppPal.printMessage('set expression: ' + name);
+        this.setExpression(name);
     }
 
     /**
