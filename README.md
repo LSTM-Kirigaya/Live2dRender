@@ -76,7 +76,7 @@ export default {
     },
     setup() {
         onMounted(async () => {
-            live2d.initializeLive2D({
+            await live2d.initializeLive2D({
                 BackgroundRGBA: [0.0, 0.0, 0.0, 0.0],
                 ResourcesPath: './cat/sdwhite cat b.model3.json',
                 CanvasSize: {
