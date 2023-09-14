@@ -77,20 +77,6 @@ async function initializeLive2D(config: Live2dRenderConfig) {
     return launchLive2d();
 }
 
-// /**
-//  * ブラウザロード後の処理
-//  */
-// window.onload = (): void => {
-//     LAppDefine.CanvasId = 'live2d';
-//     LAppDefine.CanvasSize = {
-//         height: 500,
-//         width: 400
-//     }
-//     LAppDefine.BackgroundRGBA = [0.0, 0.0, 0.0, 0.0];
-//     LAppDefine.ResourcesPath = './cat/sdwhite cat b.model3.json';
-//     launchLive2d();
-// };
-
 /**
  * 終了時の処理
  */
