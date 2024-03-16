@@ -49,7 +49,7 @@ export class LAppPal {
    * @param message 文字列
    */
   public static printMessage(message: string): void {
-    console.log(message);
+    // console.log(message);
   }
 
   static lastUpdate = Date.now();

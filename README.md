@@ -36,7 +36,7 @@ $ npm install live2d-render
 然后在你的 html 入口文件的 head 部分，vue3 项目中是 `./public/index.html` 中加入：
 ```html
 <script src="https://unpkg.com/core-js-bundle@3.6.1/minified.js"></script>
-<script src = "https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
+<script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
 ```
 
 #### 2. 了解和准备 live2d 文件
@@ -44,7 +44,7 @@ $ npm install live2d-render
 先准备一个 live2d 模型，一个 live2d 模型通常是一个包含了如下几类文件的文件夹：
 
 - xxx.moc3
-- xxx.model3.json
+- xxx.model3.json (配置文件，live2d 最先读取的就是这个文件，可以认为它是 live2d 模型的入口文件，里面列举了所有模型需要使用的静态资源的相对路径)
 - 其他
 
 比如我的模型为一个小猫娘，文件夹为 cat，这个文件夹下包含了如下的文件：
@@ -103,6 +103,10 @@ $ npm run serve
 <div align=center>
 <img src="https://picx.zhimg.com/80/v2-e4e1faa75ffec1165ce9845f1f6284d7_1440w.png" style="width: 80%;"/>
 </div>
+
+#### 打包调优
+
+如果你觉得 png 太大影响网络传输速度，可以考虑将 png 转化成 webp 后，然后把 model3.json 文件里面的 Textures 选项修改为 webp 的相对路径。
 
 ---
 
