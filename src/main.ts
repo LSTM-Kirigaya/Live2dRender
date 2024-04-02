@@ -11,10 +11,14 @@ import { LAppLive2DManager } from './lapplive2dmanager';
 import { LAppMessageBox } from './lappmessagebox';
 
 interface Live2dRenderConfig {
-    CanvasId: string
-    CanvasSize: { height: number, width: number } | 'auto'
-    BackgroundRGBA: [number, number, number, number]
-    ResourcesPath: string
+    CanvasId?: string
+    CanvasSize?: { height: number, width: number } | 'auto'
+    BackgroundRGBA?: [number, number, number, number]
+    ResourcesPath?: string
+    LoadFromCache?: boolean
+
+    MinifiedJSUrl: string
+    Live2dCubismcoreUrl: string
 }
 
 async function launchLive2d() {
@@ -61,7 +65,52 @@ function revealMessageBox() {
 }
 
 
+/**
+ * 
+ * @param src
+ * @returns 
+ */
+function load(src: string): Promise<void> {
+    const script = document.createElement('script');
+    script.src = src;
+
+    return new Promise((resolve, reject) => {
+        script.onload = () => {
+            resolve();
+        };
+        script.onerror = (error) => {
+            reject(error);
+        };
+        document.head.appendChild(script);
+    });
+}
+
+async function loadLibs(urls: string[]) {
+    const ps = [];
+    
+    for (const url of urls) {
+        ps.push(load(url));
+    }
+
+    for (const p of ps) {
+        await p;
+    }
+}
+
+
 async function initializeLive2D(config: Live2dRenderConfig) {
+    if (config.MinifiedJSUrl === undefined) {
+        config.MinifiedJSUrl = 'https://unpkg.com/core-js-bundle@3.6.1/minified.js';
+    }
+    if (config.Live2dCubismcoreUrl === undefined) {
+        config.Live2dCubismcoreUrl = 'https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js';
+    }
+
+    await loadLibs([
+        config.MinifiedJSUrl,
+        config.Live2dCubismcoreUrl
+    ]);
+
     if (config.CanvasId) {
         LAppDefine.CanvasId = config.CanvasId;
     }
@@ -73,6 +122,9 @@ async function initializeLive2D(config: Live2dRenderConfig) {
     }
     if (config.ResourcesPath) {
         LAppDefine.ResourcesPath = config.ResourcesPath;
+    }
+    if (config.LoadFromCache) {
+        LAppDefine.LoadFromCache = config.LoadFromCache;
     }
     return launchLive2d();
 }

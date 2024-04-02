@@ -17,6 +17,7 @@ interface ILAppDefine {
     BackgroundRGBA: [number, number, number, number]
 
     CanvasSize: { width: number; height: number } | 'auto'
+    LoadFromCache: boolean
 
     // 画面参数
     ViewScale: number
@@ -73,6 +74,8 @@ const LAppDefine: ILAppDefine = {
     MessageBoxId: 'live2dMessageBox',
     BackgroundRGBA: [0.0, 0.0, 0.0, 0.0],
     CanvasSize: 'auto',
+    LoadFromCache: false,
+
     ViewScale: 1.0,
     ViewMaxScale: 2.0,
     ViewMinScale: 0.8,

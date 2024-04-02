@@ -8,6 +8,8 @@
 import { csmVector, iterator } from '@framework/type/csmvector';
 
 import { gl } from './lappdelegate';
+import LAppDefine from './lappdefine';
+import { cacheFetch } from './cache';
 
 /**
  * テクスチャ管理クラス
@@ -36,17 +38,17 @@ export class LAppTextureManager {
     }
 
     /**
-     * 画像読み込み
+     * 从远程载入 材质 文件，可以是 png，也可以是 webp
      *
      * @param fileName 読み込む画像ファイルパス名
      * @param usePremultiply Premult処理を有効にするか
      * @return 画像情報、読み込み失敗時はnullを返す
      */
-    public createTextureFromPngFile(
+    public async createTextureFromFile(
         fileName: string,
         usePremultiply: boolean,
         callback: (textureInfo: TextureInfo) => void
-    ): void {
+    ): Promise<void> {
         // search loaded texture already
         for (
             let ite: iterator<TextureInfo> = this._textures.begin();
@@ -69,6 +71,7 @@ export class LAppTextureManager {
 
         // データのオンロードをトリガーにする
         const img = new Image();
+        
         img.onload = (): void => {
             // テクスチャオブジェクトの作成
             const tex: WebGLTexture = gl.createTexture();
@@ -111,7 +114,13 @@ export class LAppTextureManager {
 
             callback(textureInfo);
         };
-        img.src = fileName;
+
+        const imageFormat = fileName.split('.').at(-1).toLowerCase();
+        const response = await cacheFetch(fileName);
+        const arraybuffer = await response.arrayBuffer();
+        const blob = new Blob([arraybuffer], { type: 'image/' + imageFormat });
+        const url = URL.createObjectURL(blob);
+        img.src = url;
     }
 
     /**

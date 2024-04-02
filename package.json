@@ -2,8 +2,7 @@
     "private": true,
     "scripts": {
         "start": "webpack-cli serve --mode development",
-        "build": "webpack --mode development",
-        "build:prod": "webpack --mode production",
+        "build": "webpack --mode production",
         "test": "tsc --noEmit",
         "lint": "eslint src --ext .ts",
         "lint:fix": "eslint src --ext .ts --fix",
