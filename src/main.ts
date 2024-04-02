@@ -16,7 +16,6 @@ interface Live2dRenderConfig {
     BackgroundRGBA?: [number, number, number, number]
     ResourcesPath?: string
     LoadFromCache?: boolean
-
     MinifiedJSUrl: string
     Live2dCubismcoreUrl: string
 }
