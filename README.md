@@ -1,6 +1,6 @@
 # Live2dRender
 
-[English Document](https://www.fluentu.com/blog/chinese/best-website-to-learn-chinese/)
+[English Document](https://www.npmjs.com/package/live2d-render)
 
 适用于最新版本 Live2D 模型文件的 Javascript 渲染器。
 
@@ -129,3 +129,27 @@ $ npm i
 ```
 
 然后，自己去折腾吧。
+
+---
+
+## Buy me a coffee
+
+Sponsor me in my own website: [https://kirigaya.cn/sponsor](https://kirigaya.cn/sponsor).
+
+---
+
+## CHANHELOG
+
+[2024.04.02]
+
+- 使用 indexDB 解决了 localStorage 只能存储 5MB 数据的问题
+
+[2024.04.02]
+
+- 将外部的两个库的载入融合进初始化内
+- 使用 `localStorage` 优化网络请求
+- 大幅度压缩库的大小: 2240 KB -> 190 KB
+
+[2023.10.01]
+
+- 完成主体工作

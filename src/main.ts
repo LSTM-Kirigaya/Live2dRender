@@ -9,6 +9,7 @@ import { LAppDelegate } from './lappdelegate';
 import LAppDefine from './lappdefine';
 import { LAppLive2DManager } from './lapplive2dmanager';
 import { LAppMessageBox } from './lappmessagebox';
+import { initialiseIndexDB } from './db';
 
 interface Live2dRenderConfig {
     CanvasId?: string
@@ -25,11 +26,9 @@ async function launchLive2d() {
     const ok = live2dModel.initialize();
     if (!ok) {
         console.log('初始化失败，退出');
-        return;
     } else {
         // just run
         live2dModel.run();
-        return;
     }
 }
 
@@ -122,9 +121,13 @@ async function initializeLive2D(config: Live2dRenderConfig) {
     if (config.ResourcesPath) {
         LAppDefine.ResourcesPath = config.ResourcesPath;
     }
-    if (config.LoadFromCache) {
+    if (config.LoadFromCache && window.indexedDB) {
         LAppDefine.LoadFromCache = config.LoadFromCache;
+        // 初始化缓存数据库
+        const db = await initialiseIndexDB('db', 1, 'live2d');
+        LAppDefine.Live2dDB = db;
     }
+
     return launchLive2d();
 }
 

@@ -18,6 +18,7 @@ interface ILAppDefine {
 
     CanvasSize: { width: number; height: number } | 'auto'
     LoadFromCache: boolean
+    Live2dDB: IDBDatabase | undefined
 
     // 画面参数
     ViewScale: number
@@ -75,6 +76,7 @@ const LAppDefine: ILAppDefine = {
     BackgroundRGBA: [0.0, 0.0, 0.0, 0.0],
     CanvasSize: 'auto',
     LoadFromCache: false,
+    Live2dDB: undefined,
 
     ViewScale: 1.0,
     ViewMaxScale: 2.0,
