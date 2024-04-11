@@ -47,9 +47,11 @@ export class LAppMessageBox {
         this.hideMessageBox();
         messageBox.textContent = message;
 
-        const wrapperDiv: HTMLDivElement = document.querySelector('#' + LAppDefine.MessageBoxId);
-        wrapperDiv.style.bottom = 500 + messageBox.offsetHeight + 'px';
-        
+        setTimeout(() => {
+            const wrapperDiv: HTMLDivElement = document.querySelector('#' + LAppDefine.MessageBoxId);
+            wrapperDiv.style.bottom = (LAppDefine.CanvasSize === 'auto' ? 500: LAppDefine.CanvasSize.height) + messageBox.offsetHeight - 25 + 'px';    
+        }, 10);
+
         this.revealMessageBox();
         if (duration != null) {
             setTimeout(() => {
