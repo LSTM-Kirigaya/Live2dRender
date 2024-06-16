@@ -1,3 +1,5 @@
+![Live2dRender](https://socialify.git.ci/LSTM-Kirigaya/Live2dRender/image?description=1&font=Jost&forks=1&issues=1&language=1&logo=https%3A%2F%2Fpic1.zhimg.com%2F80%2Fv2-16af50337a4ecec461aba0dade8e7403_1440w.png&name=1&pattern=Formal%20Invitation&pulls=1&stargazers=1&theme=Light)
+
 # Live2dRender
 
 [English Document](https://www.npmjs.com/package/live2d-render)
