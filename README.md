@@ -35,11 +35,6 @@ $ cd test-live2d-render
 $ npm install live2d-render
 ```
 
-然后在你的 html 入口文件的 head 部分，vue3 项目中是 `./public/index.html` 中加入：
-```html
-<script src="https://unpkg.com/core-js-bundle@3.6.1/minified.js"></script>
-<script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
-```
 
 #### 2. 了解和准备 live2d 文件
 
@@ -65,31 +60,39 @@ $ npm install live2d-render
 
 #### 3. 使用 live2d-render
 
-将 `./src/App.vue` 中的 `<script>` 标签下改为：
+在 `./src/App.vue` 中：
 ```javascript
+<script setup>
 import HelloWorld from './components/HelloWorld.vue'
 import { onMounted } from 'vue';
-import * as live2d from 'live2d-render';
+import * as live2d from './lib/live2d-render';
 
-export default {
-    name: 'App',
-    components: {
-        HelloWorld
-    },
-    setup() {
-        onMounted(async () => {
-            await live2d.initializeLive2D({
-                BackgroundRGBA: [0.0, 0.0, 0.0, 0.0],
-                ResourcesPath: './cat/sdwhite cat b.model3.json',
-                CanvasSize: {
-                    height: 500,
-                    width: 400
-                }
-            })
-            console.log('finish loading');
-        });
-    }
-}
+defineComponent({
+    name: 'App'
+});
+
+onMounted(async () => {
+    await live2d.initializeLive2D({
+        // live2d 所在区域的背景颜色
+        BackgroundRGBA: [0.0, 0.0, 0.0, 0.0],
+
+        // live2d 的 model3.json 文件的相对路径
+        ResourcesPath: './cat/sdwhite cat b.model3.json',
+
+        // live2d 的大小
+        CanvasSize: {
+            height: 500,
+            width: 400
+        },
+
+        // 是否使用 indexDB 进行缓存优化，这样下一次载入就不会再发起网络请求了
+        LoadFromCache: true
+    });
+    
+    console.log('finish loading');
+});
+
+</script>
 ```
 
 
