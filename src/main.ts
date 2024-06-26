@@ -108,6 +108,11 @@ async function loadLibs(urls: string[]) {
 
 
 async function initializeLive2D(config: Live2dRenderConfig) {
+    // 如果有 live2d 就不创建了
+    if (document.getElementById(LAppDefine.CanvasId)) {
+        return;
+    }
+
     if (config.MinifiedJSUrl === undefined) {
         config.MinifiedJSUrl = 'https://unpkg.com/core-js-bundle@3.6.1/minified.js';
     }
@@ -169,16 +174,6 @@ if (window) {
     };
 }
 
-const Live2dRender = {
-    initializeLive2D,
-    setExpression,
-    setMessageBox,
-    setRandomExpression,
-    hideMessageBox,
-    revealMessageBox
-};
-
-export default Live2dRender;
 
 export {
     initializeLive2D,

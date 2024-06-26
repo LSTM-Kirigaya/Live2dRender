@@ -53,7 +53,7 @@ export class LAppMessageBox {
         }, 10);
 
         this.revealMessageBox();
-        if (duration != null) {
+        if (duration) {
             setTimeout(() => {
                 this.hideMessageBox();
             }, duration);
