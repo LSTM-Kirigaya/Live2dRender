@@ -66,6 +66,7 @@ export class LAppDelegate {
         canvas.style.bottom = '0';
         canvas.style.right = '0';
         canvas.style.zIndex = '9999';
+        LAppDefine.Canvas = canvas;
         
         if (LAppDefine.CanvasSize === 'auto') {
             this._resizeCanvas();
@@ -73,6 +74,9 @@ export class LAppDelegate {
             canvas.width = LAppDefine.CanvasSize.width;
             canvas.height = LAppDefine.CanvasSize.height;
         }
+
+        canvas.style.opacity = '0';
+        canvas.style.transition = '.7s cubic-bezier(0.23, 1, 0.32, 1)';
 
         // glコンテキストを初期化
         // @ts-ignore

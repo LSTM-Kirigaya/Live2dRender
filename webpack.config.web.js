@@ -7,9 +7,9 @@ module.exports = {
     entry: './src/main.ts',
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: 'live2d-render.js',
+        filename: 'live2d-render.bundle.js',
         publicPath: '/dist/',
-        libraryTarget: 'commonjs2',
+        libraryTarget: 'umd',
         library: 'Live2dRender'
     },
     resolve: {

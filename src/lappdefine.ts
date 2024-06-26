@@ -12,6 +12,7 @@ import { LogLevel } from '@framework/live2dcubismframework';
  */
 
 interface ILAppDefine {
+    Canvas: undefined | HTMLCanvasElement 
     CanvasId: string
     MessageBoxId: string
     BackgroundRGBA: [number, number, number, number]
@@ -66,11 +67,16 @@ interface ILAppDefine {
     // 默认渲染大小
     RenderTargetWidth: number
     RenderTargetHeight: number
+
+    showToolBox: boolean
+    [property: string]: any
 }
 
 
 
 const LAppDefine: ILAppDefine = {
+    Canvas: undefined,
+    showToolBox: false,
     CanvasId: 'live2d',
     MessageBoxId: 'live2dMessageBox',
     BackgroundRGBA: [0.0, 0.0, 0.0, 0.0],

@@ -10,6 +10,7 @@ import LAppDefine from './lappdefine';
 import { LAppLive2DManager } from './lapplive2dmanager';
 import { LAppMessageBox } from './lappmessagebox';
 import { initialiseIndexDB } from './db';
+import { addToolBox } from './toolbox';
 
 interface Live2dRenderConfig {
     CanvasId?: string
@@ -17,6 +18,7 @@ interface Live2dRenderConfig {
     BackgroundRGBA?: [number, number, number, number]
     ResourcesPath?: string
     LoadFromCache?: boolean
+    ShowToolBox?: boolean
     MinifiedJSUrl: string
     Live2dCubismcoreUrl: string
 }
@@ -29,6 +31,15 @@ async function launchLive2d() {
     } else {
         // just run
         live2dModel.run();
+        // show
+        if (LAppDefine.Canvas) {
+            setTimeout(() => {
+                LAppDefine.Canvas.style.opacity = '1';
+                if (LAppDefine.ShowToolBox) {
+                    addToolBox();
+                }
+            }, 500);
+        }
     }
 }
 
@@ -103,6 +114,11 @@ async function initializeLive2D(config: Live2dRenderConfig) {
     if (config.Live2dCubismcoreUrl === undefined) {
         config.Live2dCubismcoreUrl = 'https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js';
     }
+    if (config.ShowToolBox === undefined) {
+        config.ShowToolBox = false;
+    }
+
+    LAppDefine.ShowToolBox = config.ShowToolBox;
 
     await loadLibs([
         config.MinifiedJSUrl,
@@ -131,25 +147,38 @@ async function initializeLive2D(config: Live2dRenderConfig) {
     return launchLive2d();
 }
 
-/**
- * 終了時の処理
- */
-window.onbeforeunload = (): void => {
-    const live2dModel = LAppDelegate.getInstance();
-    if (live2dModel) {
-        live2dModel.release();
+if (window) {
+    /**
+     * 終了時の処理
+     */
+    window.onbeforeunload = (): void => {
+        const live2dModel = LAppDelegate.getInstance();
+        if (live2dModel) {
+            live2dModel.release();
+        }
     }
+
+    /**
+     * Process when changing screen size.
+     */
+    window.onresize = () => {
+        const live2dModel = LAppDelegate.getInstance();
+        if (live2dModel && LAppDefine.CanvasSize === 'auto') {
+            live2dModel.onResize();
+        }
+    };
 }
 
-/**
- * Process when changing screen size.
- */
-window.onresize = () => {
-    const live2dModel = LAppDelegate.getInstance();
-    if (live2dModel && LAppDefine.CanvasSize === 'auto') {
-        live2dModel.onResize();
-    }
+const Live2dRender = {
+    initializeLive2D,
+    setExpression,
+    setMessageBox,
+    setRandomExpression,
+    hideMessageBox,
+    revealMessageBox
 };
+
+export default Live2dRender;
 
 export {
     initializeLive2D,
