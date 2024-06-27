@@ -109,7 +109,8 @@ async function loadLibs(urls: string[]) {
 
 async function initializeLive2D(config: Live2dRenderConfig) {
     // 如果有 live2d 就不创建了
-    if (document.getElementById(LAppDefine.CanvasId)) {
+    const els = document.querySelectorAll('#live2d');
+    if (els.length >= 1) {
         return;
     }
 
