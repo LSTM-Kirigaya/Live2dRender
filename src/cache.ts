@@ -30,12 +30,20 @@ interface UrlDBItem {
     arraybuffer: ArrayBuffer
 }
 
+interface ICacheSetting {
+    refreshCache: boolean
+}
+
+export const CacheFetchSetting: ICacheSetting = {
+    refreshCache: false
+};
+
 /**
- * 
+ * @description 获取 live2d 的数据，如果存在缓存，则从缓存中拿取，不会发生请求
  * @param url 需要请求的链接，如果 indexDB 中存在，则不会被请求
  */
 export async function cacheFetch(url: string): Promise<FakeResponse> {
-    if (LAppDefine.LoadFromCache && LAppDefine.Live2dDB) {
+    if (!CacheFetchSetting.refreshCache && LAppDefine.LoadFromCache && LAppDefine.Live2dDB) {
         const item = await selectItemIndexDB<UrlDBItem>('url', url);
         if (item !== undefined) {
             const arrayBuffer = item.arraybuffer;
@@ -48,7 +56,9 @@ export async function cacheFetch(url: string): Promise<FakeResponse> {
         }
     }
 
-    // use fetch
+    // 请求并编入缓存
+    console.log('请求 url: ' + url);
+
     const orginalResponse = await fetch(url);
     const arraybuffer = await orginalResponse.arrayBuffer();
     if (LAppDefine.LoadFromCache && LAppDefine.Live2dDB) {

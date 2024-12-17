@@ -1,7 +1,13 @@
+import { cacheFetch, CacheFetchSetting } from "./cache";
 import LAppDefine from "./lappdefine";
 import { LAppLive2DManager } from './lapplive2dmanager';
 
-const iconSize = 20;
+// TODO: 适配到 live2dBoxItemCss
+const _defaultIconSize = 35;
+const _defaultIconBgColor = '#00A6ED';
+const _defaultIconFgColor = 'white';
+const _defaultExpressionContainerWidth = 300;
+
 let container: undefined | HTMLDivElement = undefined;
 let containerTimer: NodeJS.Timeout | string | number | undefined = undefined;
 let collapse = false;
@@ -15,20 +21,20 @@ function addCssClass() {
         margin: 2px;
         padding: 2px;
         display: flex;
-        height: 20px;
-        width: 20px;
+        height: ${_defaultIconSize}px;
+        width: ${_defaultIconSize}px;
         justify-content: center;
         align-items: center;
         cursor: pointer;
         font-size: 0.7rem;
-        background-color: rgb(255, 149, 188);
-        color: white;
+        background-color: ${_defaultIconBgColor};
+        color: ${_defaultIconFgColor};
         border-radius: 0.9em;
         transition: .5s ease;
     }
 
     .${live2dBoxItemCss}:hover {
-        scale: 1.3;
+        scale: 1.2;
     }
     `;
     document.head.appendChild(style);  
@@ -56,11 +62,14 @@ function hideContainer() {
     }
 }
 
-function makeCommonIcon(text?: string) {
+/**
+ * @description 生成一个普通的按钮元素
+ * @param text 元素内的文本
+ * @returns 
+ */
+function createCommonIcon(text?: string) {
     const div = document.createElement('div');
-
     div.classList.add(live2dBoxItemCss);
-
     if (text) {
         div.textContent = text;
     }
@@ -68,11 +77,15 @@ function makeCommonIcon(text?: string) {
 }
 
 
-// 收起和展开 live2d
-function makeCollapseIcon(container: HTMLDivElement) {
-    const icon = makeCommonIcon('➡️');
+/**
+ * @description 收起和展开 live2d
+ * @param container 
+ * @returns
+ */
+function makeLive2dCollapseIcon(container: HTMLDivElement): HTMLDivElement {
+    const icon = createCommonIcon('➡️');
     icon.style.transition = '.5s ease';
-    icon.style.backgroundColor = '#00A6ED';
+    icon.style.backgroundColor = _defaultIconBgColor;
     icon.style.fontSize = '1.05rem';
 
     let xoffset = 0;
@@ -102,20 +115,73 @@ function makeCollapseIcon(container: HTMLDivElement) {
     return icon;
 }
 
+/**
+ * @description 收起/展开 展示表情列表
+ * @param container
+ * @returns
+ */
+function makeExpressionListCollapseIcon(container: HTMLDivElement): HTMLDivElement {
+    const icon = createCommonIcon('>');
+    icon.style.transition = '.5s ease';
+    icon.style.backgroundColor = _defaultIconBgColor;
+    icon.style.fontSize = '1.05rem';
+    icon.style.position = 'relative';
 
-// 展示所有的表情
+    const iconsWrapper = document.createElement('div');
+    const animationDurationMS = 7;
+    iconsWrapper.style.position = 'absolute';
+    iconsWrapper.style.transition = `.${animationDurationMS}s cubic-bezier(0.23, 1, 0.32, 1)`;
+    iconsWrapper.style.width = _defaultExpressionContainerWidth + 'px';
+    iconsWrapper.style.top = 0 + 'px';
+    iconsWrapper.style.left = - _defaultExpressionContainerWidth + 'px';
+    iconsWrapper.style.display = 'flex';
+
+    // 创建每一个表情的 icon
+    const expressionIcons = makeExpressionListIcons(container);
+    // 加入展开列表中
+    for (const expression of expressionIcons) {
+        iconsWrapper.appendChild(expression);
+    }
+    icon.appendChild(iconsWrapper);
+
+    let showExpression = false;
+    // 定义点击展开列表按钮逻辑
+    icon.onclick = async () => {
+        showExpression = !showExpression;
+        if (showExpression) {
+            iconsWrapper.style.opacity = '1';
+            setTimeout(() => {
+                iconsWrapper.style.display = 'display';
+            }, animationDurationMS * 100);
+        } else {
+            iconsWrapper.style.opacity = '0';
+            setTimeout(() => {
+                iconsWrapper.style.display = 'none';
+            }, animationDurationMS * 100);
+        }
+    }
+
+    return icon;
+}
+
+
+/**
+ * @description 展示所有的表情
+ * @param container 
+ * @returns 
+ */
 function makeExpressionListIcons(container: HTMLDivElement) {
     const manager = LAppLive2DManager.getInstance();
     const canvas = LAppDefine.Canvas;
     const icons: HTMLDivElement[] = [];
 
     if (manager && canvas) {
-        const maxExpNum = Math.max(0, Math.floor(canvas.height / iconSize) - 1);
+        const maxExpNum = Math.max(0, Math.floor(canvas.height / _defaultIconSize) - 1);
         const model = manager.model;
         const expNum = Math.min(model._expressions.getSize(), maxExpNum);
         
         for (let i = 0; i < expNum; ++ i) {
-            const icon = makeCommonIcon('E' + (i + 1));
+            const icon = createCommonIcon('E' + (i + 1));
             const name = model._expressions._keyValues[i].first;
             icon.onclick = async() => {
                 model.setExpression(name);
@@ -126,6 +192,21 @@ function makeExpressionListIcons(container: HTMLDivElement) {
     }
 
     return icons;
+}
+
+function makeRefreshCacheIcon(container: HTMLDivElement): HTMLDivElement {
+    const icon = createCommonIcon('r');
+    icon.style.transition = '.5s ease';
+    icon.style.backgroundColor = _defaultIconBgColor;
+    icon.style.fontSize = '1.05rem';
+
+    icon.onclick = async () => {
+        CacheFetchSetting.refreshCache = true;
+        const manager = LAppLive2DManager.getInstance();
+        manager.loadLive2dModel();
+    }
+
+    return icon;
 }
 
 function makeBoxItemContainer() {
@@ -145,11 +226,16 @@ function makeBoxItemContainer() {
     container.style.top = window.innerHeight - canvas.height + 'px';
 
     // 增加几个常用工具
-    const showIcon = makeCollapseIcon(container);
-    const expIcons = makeExpressionListIcons(container);
+    // 1. 收起 live2d
+    const showLive2dIcon = makeLive2dCollapseIcon(container);
+    // 2. 展示表情
+    const showExpressionsIcon = makeExpressionListCollapseIcon(container);
+    // 3. 刷新缓存
+    const refreshCacheIcon = makeRefreshCacheIcon(container);
 
-    container.appendChild(showIcon);
-    expIcons.forEach(el => container.appendChild(el));
+    container.appendChild(showLive2dIcon);
+    container.appendChild(showExpressionsIcon);
+    container.appendChild(refreshCacheIcon);
 
     document.body.appendChild(container);
 
