@@ -1,6 +1,7 @@
 import { cacheFetch, CacheFetchSetting } from "./cache";
 import LAppDefine from "./lappdefine";
 import { LAppLive2DManager } from './lapplive2dmanager';
+import * as svgIcon from "./svg";
 
 // TODO: 适配到 live2dBoxItemCss
 const _defaultIconSize = 35;
@@ -17,26 +18,53 @@ const live2dBoxItemCss = '__live2d-toolbox-item';
 function addCssClass() {
     const style = document.createElement('style');  
     style.innerHTML = `  
-    .${live2dBoxItemCss} {
-        margin: 2px;
-        padding: 2px;
-        display: flex;
-        height: ${_defaultIconSize}px;
-        width: ${_defaultIconSize}px;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        font-size: 0.7rem;
-        background-color: ${_defaultIconBgColor};
-        color: ${_defaultIconFgColor};
-        border-radius: 0.9em;
-        transition: .5s ease;
-    }
+.${live2dBoxItemCss} {
+    margin: 2px;
+    padding: 2px;
+    display: flex;
+    height: ${_defaultIconSize}px;
+    width: ${_defaultIconSize}px;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.7rem;
+    background-color: ${_defaultIconBgColor};
+    color: ${_defaultIconFgColor};
+    border-radius: 0.5em;
+    transition: all .5s cubic-bezier(0.23, 1, 0.32, 1);
+}
 
-    .${live2dBoxItemCss}:hover {
-        scale: 1.2;
-    }
-    `;
+.${live2dBoxItemCss}:hover {
+    scale: 1.2;
+}
+
+.${live2dBoxItemCss}.button-item {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    padding: 3px 10px;
+}
+
+.${live2dBoxItemCss}.button-item svg {
+    height: 20px;
+}
+
+.${live2dBoxItemCss}.expression-item {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+}
+
+.${live2dBoxItemCss}.expression-item svg {
+    height: 20px;
+    margin-right: 5px;
+}
+
+.${live2dBoxItemCss} svg path {
+    fill: white;
+}
+
+`;
     document.head.appendChild(style);  
 }
 
@@ -67,12 +95,18 @@ function hideContainer() {
  * @param text 元素内的文本
  * @returns 
  */
-function createCommonIcon(text?: string) {
+function createCommonIcon(svgString: string, extraString: string = '') {
     const div = document.createElement('div');
     div.classList.add(live2dBoxItemCss);
-    if (text) {
-        div.textContent = text;
-    }
+    div.classList.add('button-item');
+    
+    const firstSpan = document.createElement('span');
+    const secondSpan = document.createElement('span');
+    firstSpan.innerHTML = svgString;
+    secondSpan.innerText = extraString;
+
+    div.appendChild(firstSpan);
+    div.appendChild(secondSpan);
     return div;
 }
 
@@ -83,8 +117,7 @@ function createCommonIcon(text?: string) {
  * @returns
  */
 function makeLive2dCollapseIcon(container: HTMLDivElement): HTMLDivElement {
-    const icon = createCommonIcon('➡️');
-    icon.style.transition = '.5s ease';
+    const icon = createCommonIcon(svgIcon.collapseIcon);
     icon.style.backgroundColor = _defaultIconBgColor;
     icon.style.fontSize = '1.05rem';
 
@@ -121,7 +154,7 @@ function makeLive2dCollapseIcon(container: HTMLDivElement): HTMLDivElement {
  * @returns
  */
 function makeExpressionListCollapseIcon(container: HTMLDivElement): HTMLDivElement {
-    const icon = createCommonIcon('>');
+    const icon = createCommonIcon(svgIcon.expressionIcon);
     icon.style.transition = '.5s ease';
     icon.style.backgroundColor = _defaultIconBgColor;
     icon.style.fontSize = '1.05rem';
@@ -131,10 +164,33 @@ function makeExpressionListCollapseIcon(container: HTMLDivElement): HTMLDivEleme
     const animationDurationMS = 7;
     iconsWrapper.style.position = 'absolute';
     iconsWrapper.style.transition = `.${animationDurationMS}s cubic-bezier(0.23, 1, 0.32, 1)`;
-    iconsWrapper.style.width = _defaultExpressionContainerWidth + 'px';
+    // iconsWrapper.style.width = _defaultExpressionContainerWidth + 'px';
     iconsWrapper.style.top = 0 + 'px';
-    iconsWrapper.style.left = - _defaultExpressionContainerWidth + 'px';
     iconsWrapper.style.display = 'flex';
+    iconsWrapper.style.flexDirection = 'column';
+    iconsWrapper.style.transform = 'translate(-50px, 0px)';
+
+    iconsWrapper.addEventListener('wheel', e => {
+        // 获取当前的transform值
+        const currentTransform = getComputedStyle(iconsWrapper).transform;
+        const matrix = new WebKitCSSMatrix(currentTransform);
+    
+        // 获取当前y轴平移值
+        let translateY = matrix.m42; // y轴平移量
+    
+        // 根据滚轮方向调整位置
+        if(e.deltaY > 0) { // 滚轮向下滚动，元素上移
+            translateY -= 50;
+        } else { // 滚轮向上滚动，元素下移
+            translateY += 50;
+        }
+    
+        // 更新transform属性
+        iconsWrapper.style.transform = `translate(-50px, ${translateY}px)`;
+    
+        e.preventDefault(); // 阻止默认的滚动行为
+    });
+
 
     // 创建每一个表情的 icon
     const expressionIcons = makeExpressionListIcons(container);
@@ -181,8 +237,13 @@ function makeExpressionListIcons(container: HTMLDivElement) {
         const expNum = Math.min(model._expressions.getSize(), maxExpNum);
         
         for (let i = 0; i < expNum; ++ i) {
-            const icon = createCommonIcon('E' + (i + 1));
             const name = model._expressions._keyValues[i].first;
+
+            // 去除结尾的 json
+            const icon = createCommonIcon(name.replace('.exp3.json', ''));
+            
+            icon.classList.add('expression-item');
+
             icon.onclick = async() => {
                 model.setExpression(name);
             }
@@ -194,8 +255,14 @@ function makeExpressionListIcons(container: HTMLDivElement) {
     return icons;
 }
 
+
+/**
+ * @description 创建强制刷新 live2d 的按钮
+ * @param container 
+ * @returns 
+ */
 function makeRefreshCacheIcon(container: HTMLDivElement): HTMLDivElement {
-    const icon = createCommonIcon('r');
+    const icon = createCommonIcon(svgIcon.reloadIcon);
     icon.style.transition = '.5s ease';
     icon.style.backgroundColor = _defaultIconBgColor;
     icon.style.fontSize = '1.05rem';
@@ -205,6 +272,23 @@ function makeRefreshCacheIcon(container: HTMLDivElement): HTMLDivElement {
         const manager = LAppLive2DManager.getInstance();
         manager.loadLive2dModel();
     }
+
+    return icon;
+}
+
+/**
+ * @description 创建跳转到我的 github 仓库的按钮
+ * @param container 
+ */
+function makeStarIcon(container: HTMLDivElement): HTMLDivElement {
+    const icon = createCommonIcon(svgIcon.starIcon);
+    icon.style.transition = '.5s ease';
+    icon.style.backgroundColor = _defaultIconBgColor;
+    icon.style.fontSize = '1.05rem';
+
+    icon.onclick = async () => {
+        window.open('https://github.com/LSTM-Kirigaya/Live2dRender', '_blank');
+    };
 
     return icon;
 }
@@ -232,10 +316,13 @@ function makeBoxItemContainer() {
     const showExpressionsIcon = makeExpressionListCollapseIcon(container);
     // 3. 刷新缓存
     const refreshCacheIcon = makeRefreshCacheIcon(container);
+    // 4. 跳转到我的 github
+    const starIcon = makeStarIcon(container);
 
     container.appendChild(showLive2dIcon);
     container.appendChild(showExpressionsIcon);
     container.appendChild(refreshCacheIcon);
+    container.appendChild(starIcon);
 
     document.body.appendChild(container);
 

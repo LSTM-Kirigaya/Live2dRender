@@ -1,5 +1,6 @@
 import LAppDefine from "./lappdefine";
 import { selectItemIndexDB, createItemIndexDB } from './db';
+import { pinkLog } from "./utils";
 
 function arrayBufferToBase64(buffer: ArrayBuffer): string {
     let binary = '';
@@ -57,7 +58,7 @@ export async function cacheFetch(url: string): Promise<FakeResponse> {
     }
 
     // 请求并编入缓存
-    console.log('请求 url: ' + url);
+    pinkLog('[Live2dRender] Reload 请求 url ' + url)
 
     const orginalResponse = await fetch(url);
     const arraybuffer = await orginalResponse.arrayBuffer();
