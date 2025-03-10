@@ -240,7 +240,8 @@ function makeExpressionListIcons(container: HTMLDivElement) {
             const name = model._expressions._keyValues[i].first;
 
             // 去除结尾的 json
-            const icon = createCommonIcon(name.replace('.exp3.json', ''));
+            const renderName = name.replace('.exp3.json', '');
+            const icon = createCommonIcon(svgIcon.catIcon, renderName);
             
             icon.classList.add('expression-item');
 
