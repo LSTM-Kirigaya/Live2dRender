@@ -13,6 +13,8 @@ import LAppDefine from './lappdefine';
 import { canvas } from './lappdelegate';
 import { LAppModel } from './lappmodel';
 import { LAppPal } from './lapppal';
+import { pinkLog, redLog } from './utils';
+import { reloadToolBox } from './toolbox';
 
 // 单例模式全局变量
 export let s_instance: LAppLive2DManager = null;
@@ -183,21 +185,36 @@ export class LAppLive2DManager {
     }
 
     /**
-     * シーンを切り替える
-     * サンプルアプリケーションではモデルセットの切り替えを行う。
+     * @description 重新加载 Live2d 模型
+     * @returns 
      */
-    public loadLive2dModel(): void {
+    public async loadLive2dModel(): Promise<void> {
         const modelJsonPath = LAppDefine.ResourcesPath;
         if (!modelJsonPath.endsWith('.model3.json')) {
-            console.log('无法加载模型！模型资源路径的结尾必须是.model3.json！');
+            redLog('无法加载模型！模型资源路径的结尾必须是.model3.json！');
             return;
         }
 
         const modelPath = this.getModelPath(modelJsonPath);
 
+        // 释放所有模型，此操作会清空 this._models
         this.releaseAllModel();
-        this._models.pushBack(new LAppModel());
-        this._models.at(0).loadAssets(modelPath, modelJsonPath);
+
+        // 装载新的模型，并加载新的资源
+        const appModel = new LAppModel();
+        
+        // TODO: 支持更多的模型
+        this._models.pushBack(appModel);        
+
+        // 装载模型
+        await appModel.loadAssets(modelPath, modelJsonPath);
+
+        // 下一个 tick 中，重新制作工具栏，更新表情
+        setTimeout(() => {
+            reloadToolBox();            
+        }, 500);
+
+        pinkLog("[Live2dRender] 模型重载完成，重载路径: " + modelPath);
     }
 
     public setViewMatrix(m: CubismMatrix44) {

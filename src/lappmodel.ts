@@ -645,12 +645,12 @@ export class LAppModel extends CubismUserModel {
      */
     public setExpression(expressionId: string): void {        
         const motion: ACubismMotion = this._expressions.getValue(expressionId);
-
+        
         if (this._debugMode) {
             LAppPal.printMessage(`[APP]expression: [${expressionId}]`);
         }
 
-        if (motion != null) {
+        if (motion != null) {            
             this._expressionManager.startMotionPriority(
                 motion,
                 true,

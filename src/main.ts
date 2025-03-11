@@ -32,12 +32,11 @@ async function launchLive2d() {
         // just run
         live2dModel.run();
         // show
-        if (LAppDefine.Canvas) {
+        if (LAppDefine.Canvas && LAppDefine.ShowToolBox) {
+            // 下一个 tick 中注册
             setTimeout(() => {
                 LAppDefine.Canvas.style.opacity = '1';
-                if (LAppDefine.ShowToolBox) {
-                    addToolBox();
-                }
+                addToolBox();
             }, 500);
         }
     }
@@ -47,7 +46,9 @@ async function launchLive2d() {
 function setExpression(name: string) {
     const manager = LAppLive2DManager.getInstance();
     if (manager) {
-        manager.model.setExpression(name);
+        // 默认拿第一个模型
+        const model = manager.getModel(0);        
+        model.setExpression(name);
     }
 }
 

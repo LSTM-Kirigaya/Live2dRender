@@ -7,6 +7,7 @@ import * as svgIcon from "./svg";
 const _defaultIconSize = 35;
 const _defaultIconBgColor = '#00A6ED';
 const _defaultIconFgColor = 'white';
+const _defaultHoverColor = 'rgb(224, 209, 41)';
 const _defaultExpressionContainerWidth = 300;
 
 let container: undefined | HTMLDivElement = undefined;
@@ -17,7 +18,7 @@ const live2dBoxItemCss = '__live2d-toolbox-item';
 
 function addCssClass() {
     const style = document.createElement('style');  
-    style.innerHTML = `  
+    style.innerHTML = `
 .${live2dBoxItemCss} {
     margin: 2px;
     padding: 2px;
@@ -31,18 +32,18 @@ function addCssClass() {
     background-color: ${_defaultIconBgColor};
     color: ${_defaultIconFgColor};
     border-radius: 0.5em;
-    transition: all .5s cubic-bezier(0.23, 1, 0.32, 1);
+    transition: all .35s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .${live2dBoxItemCss}:hover {
-    scale: 1.2;
+    background-color: rgb(224, 209, 41);
 }
 
 .${live2dBoxItemCss}.button-item {
     display: flex;
     align-items: center;
     width: fit-content;
-    padding: 3px 10px;
+    padding: 5px 10px 0px;
 }
 
 .${live2dBoxItemCss}.button-item svg {
@@ -53,6 +54,14 @@ function addCssClass() {
     display: flex;
     align-items: center;
     width: fit-content;
+    padding: 3px 10px;
+}
+
+.${live2dBoxItemCss}.expression-item > span:last-child {
+    width: 60px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .${live2dBoxItemCss}.expression-item svg {
@@ -95,10 +104,10 @@ function hideContainer() {
  * @param text 元素内的文本
  * @returns 
  */
-function createCommonIcon(svgString: string, extraString: string = '') {
+function createCommonIcon(svgString: string, extraString: string = '', cssClasses: string[] = []) {
     const div = document.createElement('div');
     div.classList.add(live2dBoxItemCss);
-    div.classList.add('button-item');
+    cssClasses.forEach(cssString => div.classList.add(cssString));
     
     const firstSpan = document.createElement('span');
     const secondSpan = document.createElement('span');
@@ -117,9 +126,18 @@ function createCommonIcon(svgString: string, extraString: string = '') {
  * @returns
  */
 function makeLive2dCollapseIcon(container: HTMLDivElement): HTMLDivElement {
-    const icon = createCommonIcon(svgIcon.collapseIcon);
+    const icon = createCommonIcon(svgIcon.collapseIcon, '', ['button-item']);
     icon.style.backgroundColor = _defaultIconBgColor;
     icon.style.fontSize = '1.05rem';
+
+    // 注册 icon 的鼠标事件
+    icon.addEventListener('mouseenter', () => {
+        icon.style.backgroundColor = _defaultHoverColor;
+    });
+
+    icon.addEventListener('mouseleave', () => {
+        icon.style.backgroundColor = _defaultIconBgColor;
+    });
 
     let xoffset = 0;
     icon.onclick = async () => {
@@ -149,27 +167,38 @@ function makeLive2dCollapseIcon(container: HTMLDivElement): HTMLDivElement {
 }
 
 /**
- * @description 收起/展开 展示表情列表
+ * @description 创建 【收起/展开 展示表情列表】 的按钮
  * @param container
  * @returns
  */
 function makeExpressionListCollapseIcon(container: HTMLDivElement): HTMLDivElement {
-    const icon = createCommonIcon(svgIcon.expressionIcon);
-    icon.style.transition = '.5s ease';
+    const icon = createCommonIcon(svgIcon.expressionIcon, '', ['button-item']);
     icon.style.backgroundColor = _defaultIconBgColor;
     icon.style.fontSize = '1.05rem';
     icon.style.position = 'relative';
 
+    // 创建一个容器，来容纳所有的表情按钮
     const iconsWrapper = document.createElement('div');
     const animationDurationMS = 7;
     iconsWrapper.style.position = 'absolute';
-    iconsWrapper.style.transition = `.${animationDurationMS}s cubic-bezier(0.23, 1, 0.32, 1)`;
-    // iconsWrapper.style.width = _defaultExpressionContainerWidth + 'px';
     iconsWrapper.style.top = 0 + 'px';
-    iconsWrapper.style.display = 'flex';
     iconsWrapper.style.flexDirection = 'column';
-    iconsWrapper.style.transform = 'translate(-50px, 0px)';
+    iconsWrapper.style.transform = 'translate(-75px, 0px)';
+    iconsWrapper.style.transition = 'all .75s cubic-bezier(0.23, 1, 0.32, 1)';
+    iconsWrapper.style.display = 'none';
 
+    // 注册 icon 的鼠标事件
+    icon.addEventListener('mouseenter', () => {
+        icon.style.backgroundColor = _defaultHoverColor;
+        iconsWrapper.style.display = 'flex';
+    });
+
+    icon.addEventListener('mouseleave', () => {
+        icon.style.backgroundColor = _defaultIconBgColor;
+        iconsWrapper.style.display = 'none';
+    });
+
+    // 容器滚动
     iconsWrapper.addEventListener('wheel', e => {
         // 获取当前的transform值
         const currentTransform = getComputedStyle(iconsWrapper).transform;
@@ -186,35 +215,35 @@ function makeExpressionListCollapseIcon(container: HTMLDivElement): HTMLDivEleme
         }
     
         // 更新transform属性
-        iconsWrapper.style.transform = `translate(-50px, ${translateY}px)`;
+        iconsWrapper.style.transform = `translate(-75px, ${translateY}px)`;
     
         e.preventDefault(); // 阻止默认的滚动行为
     });
 
-
     // 创建每一个表情的 icon
     const expressionIcons = makeExpressionListIcons(container);
     // 加入展开列表中
-    for (const expression of expressionIcons) {
+    for (const expression of expressionIcons) {        
         iconsWrapper.appendChild(expression);
     }
     icon.appendChild(iconsWrapper);
 
     let showExpression = false;
+
     // 定义点击展开列表按钮逻辑
     icon.onclick = async () => {
         showExpression = !showExpression;
-        if (showExpression) {
-            iconsWrapper.style.opacity = '1';
-            setTimeout(() => {
-                iconsWrapper.style.display = 'display';
-            }, animationDurationMS * 100);
-        } else {
-            iconsWrapper.style.opacity = '0';
-            setTimeout(() => {
-                iconsWrapper.style.display = 'none';
-            }, animationDurationMS * 100);
-        }
+        // if (showExpression) {
+        //     iconsWrapper.style.opacity = '1';
+        //     setTimeout(() => {
+        //         iconsWrapper.style.display = 'display';
+        //     }, animationDurationMS * 100);
+        // } else {
+        //     iconsWrapper.style.opacity = '0';
+        //     setTimeout(() => {
+        //         iconsWrapper.style.display = 'none';
+        //     }, animationDurationMS * 100);
+        // }
     }
 
     return icon;
@@ -233,8 +262,10 @@ function makeExpressionListIcons(container: HTMLDivElement) {
 
     if (manager && canvas) {
         const maxExpNum = Math.max(0, Math.floor(canvas.height / _defaultIconSize) - 1);
-        const model = manager.model;
-        const expNum = Math.min(model._expressions.getSize(), maxExpNum);
+        
+        // TODO: 支持更多模型
+        const model = manager.getModel(0);        
+        const expNum = Math.min(model._expressions.getSize(), maxExpNum);        
         
         for (let i = 0; i < expNum; ++ i) {
             const name = model._expressions._keyValues[i].first;
@@ -263,10 +294,18 @@ function makeExpressionListIcons(container: HTMLDivElement) {
  * @returns 
  */
 function makeRefreshCacheIcon(container: HTMLDivElement): HTMLDivElement {
-    const icon = createCommonIcon(svgIcon.reloadIcon);
-    icon.style.transition = '.5s ease';
+    const icon = createCommonIcon(svgIcon.reloadIcon, '', ['button-item']);
     icon.style.backgroundColor = _defaultIconBgColor;
     icon.style.fontSize = '1.05rem';
+
+    // 注册 icon 的鼠标事件
+    icon.addEventListener('mouseenter', () => {
+        icon.style.backgroundColor = _defaultHoverColor;
+    });
+
+    icon.addEventListener('mouseleave', () => {
+        icon.style.backgroundColor = _defaultIconBgColor;
+    });
 
     icon.onclick = async () => {
         CacheFetchSetting.refreshCache = true;
@@ -282,10 +321,18 @@ function makeRefreshCacheIcon(container: HTMLDivElement): HTMLDivElement {
  * @param container 
  */
 function makeStarIcon(container: HTMLDivElement): HTMLDivElement {
-    const icon = createCommonIcon(svgIcon.starIcon);
-    icon.style.transition = '.5s ease';
+    const icon = createCommonIcon(svgIcon.starIcon, '', ['button-item']);
     icon.style.backgroundColor = _defaultIconBgColor;
     icon.style.fontSize = '1.05rem';
+
+    // 注册 icon 的鼠标事件
+    icon.addEventListener('mouseenter', () => {
+        icon.style.backgroundColor = _defaultHoverColor;
+    });
+
+    icon.addEventListener('mouseleave', () => {
+        icon.style.backgroundColor = _defaultIconBgColor;
+    });
 
     icon.onclick = async () => {
         window.open('https://github.com/LSTM-Kirigaya/Live2dRender', '_blank');
@@ -330,22 +377,42 @@ function makeBoxItemContainer() {
     return container;
 }
 
-
-export async function addToolBox() {
-    const canvas = LAppDefine.Canvas;
-    addCssClass();
-
-    container = makeBoxItemContainer();
+export function reloadToolBox() {
+    if (!container) {
+        return;
+    }
+    
     hideContainer();
+    document.body.removeChild(container);
+    container = makeBoxItemContainer();
+    showContainer();
 
+    // 添加工具栏的事件
     container.onmouseenter = async () => {
         showContainer();
     }
+    container.onmouseleave = async () => {
+        hideContainer();
+    }
+}
 
+
+export function addToolBox() {
+    addCssClass();
+
+    container = makeBoxItemContainer();
+
+    // 添加工具栏的事件
+    hideContainer();
+    container.onmouseenter = async () => {
+        showContainer();
+    }
     container.onmouseleave = async () => {
         hideContainer();
     }
 
+    // 添加 live2d 区域的光标事件
+    const canvas = LAppDefine.Canvas;
     canvas.onmouseenter = async () => {
         showContainer();
     }

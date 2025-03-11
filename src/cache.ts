@@ -58,7 +58,7 @@ export async function cacheFetch(url: string): Promise<FakeResponse> {
     }
 
     // 请求并编入缓存
-    pinkLog('[Live2dRender] Reload 请求 url ' + url)
+    pinkLog('[Live2dRender] cacheFetch 请求并缓存 url ' + url)
 
     const orginalResponse = await fetch(url);
     const arraybuffer = await orginalResponse.arrayBuffer();
