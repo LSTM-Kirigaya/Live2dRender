@@ -183,19 +183,34 @@ function makeExpressionListCollapseIcon(container: HTMLDivElement): HTMLDivEleme
     iconsWrapper.style.position = 'absolute';
     iconsWrapper.style.top = 0 + 'px';
     iconsWrapper.style.flexDirection = 'column';
-    iconsWrapper.style.transform = 'translate(-75px, 0px)';
+    iconsWrapper.style.transform = 'translate(-45px, 0px)';
     iconsWrapper.style.transition = 'all .75s cubic-bezier(0.23, 1, 0.32, 1)';
     iconsWrapper.style.display = 'none';
+    iconsWrapper.style.opacity = '0';
+
+    let currentTranslateY = 0;
 
     // 注册 icon 的鼠标事件
     icon.addEventListener('mouseenter', () => {
         icon.style.backgroundColor = _defaultHoverColor;
+        
+        // 光标进入
         iconsWrapper.style.display = 'flex';
+        iconsWrapper.style.opacity = '1';
+        iconsWrapper.style.transform = `translate(-75px, ${currentTranslateY}px)`;
+
     });
 
     icon.addEventListener('mouseleave', () => {
         icon.style.backgroundColor = _defaultIconBgColor;
-        iconsWrapper.style.display = 'none';
+        
+        // 光标退出
+        iconsWrapper.style.opacity = '0';
+        iconsWrapper.style.transform = `translate(-45px, ${currentTranslateY}px)`;
+
+        setTimeout(() => {
+            iconsWrapper.style.display = 'none';
+        }, 500);
     });
 
     // 容器滚动
@@ -213,6 +228,8 @@ function makeExpressionListCollapseIcon(container: HTMLDivElement): HTMLDivEleme
         } else { // 滚轮向上滚动，元素下移
             translateY += 50;
         }
+
+        currentTranslateY = translateY;
     
         // 更新transform属性
         iconsWrapper.style.transform = `translate(-75px, ${translateY}px)`;
