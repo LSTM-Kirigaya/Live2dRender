@@ -183,22 +183,21 @@ function makeExpressionListCollapseIcon(container: HTMLDivElement): HTMLDivEleme
     iconsWrapper.style.position = 'absolute';
     iconsWrapper.style.top = 0 + 'px';
     iconsWrapper.style.flexDirection = 'column';
-    iconsWrapper.style.transform = 'translate(-45px, 0px)';
     iconsWrapper.style.transition = 'all .75s cubic-bezier(0.23, 1, 0.32, 1)';
-    iconsWrapper.style.display = 'none';
+    iconsWrapper.style.display = 'flex';
     iconsWrapper.style.opacity = '0';
 
     let currentTranslateY = 0;
+    iconsWrapper.style.transform = `translate(-75px, ${currentTranslateY - 50}px)`;
 
     // 注册 icon 的鼠标事件
     icon.addEventListener('mouseenter', () => {
         icon.style.backgroundColor = _defaultHoverColor;
-        
+
         // 光标进入
-        iconsWrapper.style.display = 'flex';
+        iconsWrapper.style.visibility = 'visible';
         iconsWrapper.style.opacity = '1';
         iconsWrapper.style.transform = `translate(-75px, ${currentTranslateY}px)`;
-
     });
 
     icon.addEventListener('mouseleave', () => {
@@ -206,10 +205,10 @@ function makeExpressionListCollapseIcon(container: HTMLDivElement): HTMLDivEleme
         
         // 光标退出
         iconsWrapper.style.opacity = '0';
-        iconsWrapper.style.transform = `translate(-45px, ${currentTranslateY}px)`;
+        iconsWrapper.style.transform = `translate(-75px, ${currentTranslateY - 50}px)`;
 
         setTimeout(() => {
-            iconsWrapper.style.display = 'none';
+            iconsWrapper.style.visibility = 'hidden';
         }, 500);
     });
 
@@ -244,24 +243,6 @@ function makeExpressionListCollapseIcon(container: HTMLDivElement): HTMLDivEleme
         iconsWrapper.appendChild(expression);
     }
     icon.appendChild(iconsWrapper);
-
-    let showExpression = false;
-
-    // 定义点击展开列表按钮逻辑
-    icon.onclick = async () => {
-        showExpression = !showExpression;
-        // if (showExpression) {
-        //     iconsWrapper.style.opacity = '1';
-        //     setTimeout(() => {
-        //         iconsWrapper.style.display = 'display';
-        //     }, animationDurationMS * 100);
-        // } else {
-        //     iconsWrapper.style.opacity = '0';
-        //     setTimeout(() => {
-        //         iconsWrapper.style.display = 'none';
-        //     }, animationDurationMS * 100);
-        // }
-    }
 
     return icon;
 }
